@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  email         String    @unique
+  password      String
+  name          String
+  role          Role      @default(EMPLOYEE)
+  employeeType  EmployeeType?
+  department    String?
+  managerId     String?   @db.ObjectId
+  manager       User?     @relation("ManagerEmployees", fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  employees     User[]    @relation("ManagerEmployees")
+  attendance    Attendance[]
+  leaveRequests LeaveRequest[]
+  salary        Salary?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Attendance {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId
+  user        User     @relation(fields: [userId], references: [id])
+  checkIn     DateTime
+  checkOut    DateTime?
+  ipAddress   String?
+  imageUrl    String?  // Google Drive image link
+  driveFileId String?  // Google Drive file ID
+  createdAt   DateTime @default(now())
+}
+
+model LeaveRequest {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String     @db.ObjectId
+  user      User       @relation(fields: [userId], references: [id])
+  type      LeaveType
+  subject   String
+  body      String
+  status    LeaveStatus @default(REVIEW)
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Salary {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   @unique @db.ObjectId
+  user       User     @relation(fields: [userId], references: [id])
+  amount     Float
+  tax        Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+enum Role {
+  SUPER_ADMIN
+  HR
+  MANAGER
+  EMPLOYEE
+}
+
+enum EmployeeType {
+  FULL_TIME
+  PROBATION
+  INTERN
+  NOTICE_PERIOD
+}
+
+enum LeaveType {
+  SICK
+  UNPAID
+  VACATION
+}
+
+enum LeaveStatus {
+  REVIEW
+  APPROVED
+  DECLINED
+}

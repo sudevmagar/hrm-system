@@ -2,43 +2,65 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-  // Create HR
-  const hr = await prisma.user.create({
-    data: {
-      email: 'hr@example.com',
-      password: 'hrpassword',
-      name: 'HR User',
-      role: 'HR',
-    },
+  // Check if HR exists
+  let hr = await prisma.user.findUnique({
+    where: { email: 'hr@example.com' },
   });
 
-  // Create Manager
-  const manager = await prisma.user.create({
-    data: {
-      email: 'manager@example.com',
-      password: 'managerpassword',
-      name: 'Manager User',
-      role: 'MANAGER',
-    },
+  if (!hr) {
+    hr = await prisma.user.create({
+      data: {
+        email: 'hr@example.com',
+        password: 'hrpassword',
+        name: 'HR User',
+        role: 'HR',
+      },
+    });
+  } else {
+    console.log('HR user already exists.');
+  }
+
+  // Check if Manager exists
+  let manager = await prisma.user.findUnique({
+    where: { email: 'manager@example.com' },
   });
 
-  // Create Employees
-  const employees = await Promise.all(
-    Array.from({ length: 5 }).map((_, i) =>
-      prisma.user.create({
+  if (!manager) {
+    manager = await prisma.user.create({
+      data: {
+        email: 'manager@example.com',
+        password: 'managerpassword',
+        name: 'Manager User',
+        role: 'MANAGER',
+      },
+    });
+  } else {
+    console.log('Manager user already exists.');
+  }
+
+  // Create Employees if they don't exist
+  for (let i = 1; i <= 5; i++) {
+    const email = `employee${i}@example.com`;
+    const existingEmployee = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!existingEmployee) {
+      await prisma.user.create({
         data: {
-          email: `employee${i + 1}@example.com`,
-          password: `employeepassword${i + 1}`,
-          name: `Employee ${i + 1}`,
+          email,
+          password: `employeepassword${i}`,
+          name: `Employee ${i}`,
           role: 'EMPLOYEE',
           managerId: manager.id,
         },
-      })
-    )
-  );
+      });
+    } else {
+      console.log(`Employee ${i} already exists.`);
+    }
+  }
 
-  console.log('Database seeded successfully!');
-  console.log({ hr, manager, employees });
+  console.log('Database seeding complete!');
 }
 
 main()

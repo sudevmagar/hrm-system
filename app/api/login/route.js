@@ -12,5 +12,9 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
   }
 
-  return NextResponse.json({ user });
+  // Set a session cookie (for simplicity, we're just storing the user ID)
+  const response = NextResponse.json({ user });
+  response.cookies.set('userId', user.id, { httpOnly: true });
+
+  return response;
 }

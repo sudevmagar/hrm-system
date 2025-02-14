@@ -23,7 +23,7 @@ This is a Human Resource Management System built using Next.js, MongoDB, Prisma,
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/hrm-system.git
+   git clone https://github.com/sudevo7/hrm-system.git
 
 2. Install dependencies:
    ```bash

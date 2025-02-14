@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -31,17 +30,24 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
+      {/* Company Name and HRM Title */}
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-green-400">MayaMatrix Technologies</h1>
+        <h2 className="text-xl font-semibold text-gray-900">Human Resource Management System</h2>
+      </div>
+
+      {/* Login Form */}
+      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-900">Login</h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+            <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="email">
               Email
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 bg-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500"
               id="email"
               type="email"
               placeholder="Enter your email"
@@ -50,11 +56,11 @@ export default function LoginPage() {
             />
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+            <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="password">
               Password
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 bg-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500"
               id="password"
               type="password"
               placeholder="Enter your password"
@@ -62,16 +68,13 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex justify-center">
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-gray-600 w-full"
               type="submit"
             >
               Sign In
             </button>
-            <Link href="/forgot-password" className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
-              Forgot Password?
-            </Link>
           </div>
         </form>
       </div>

@@ -14,45 +14,53 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const { email, password } = credentials;
+        console.log("🛠 Received Credentials:", credentials);
 
-        // Find the user in the database
-        const user = await prisma.user.findUnique({
-          where: { email },
-        });
+        const email = credentials.email.toLowerCase(); // Ensure case insensitivity
+        const user = await prisma.user.findUnique({ where: { email } });
 
         if (!user) {
+          console.error("❌ User not found");
           throw new Error("User not found");
         }
 
-        // Compare the provided password with the hashed password
-        const isValid = await bcrypt.compare(password, user.password);
+        console.log("🔍 Found User:", user);
+
+        const isValid = await bcrypt.compare(credentials.password, user.password);
+        console.log("🔑 Password Match:", isValid);
 
         if (!isValid) {
+          console.error("❌ Invalid password");
           throw new Error("Invalid password");
         }
 
-        // Return the user object if credentials are valid
-        return { id: user.id, email: user.email, role: user.role };
+        return {
+          id: user.id.toString(), // Ensure ObjectId is a string
+          email: user.email,
+          name: user.name,
+          role: user.role,
+        };
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = user.role; // Add the user's role to the JWT token
+        token.role = user.role;
+        token.name = user.name;
       }
       return token;
     },
     async session({ session, token }) {
-      session.user.role = token.role; // Add the user's role to the session
+      session.user.role = token.role;
+      session.user.name = token.name;
       return session;
     },
   },
   pages: {
-    signIn: "/login", // Custom login page
+    signIn: "/login",
   },
-  secret: process.env.NEXTAUTH_SECRET, // Use a secure secret
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);

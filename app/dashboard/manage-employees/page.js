@@ -9,7 +9,7 @@ export default function ManageEmployeesPage() {
   const [department, setDepartment] = useState("");
   const [role, setRole] = useState("EMPLOYEE");
   const [editEmployeeId, setEditEmployeeId] = useState(null);
-  const [showForm, setShowForm] = useState(false); // Control form visibility
+  const [showForm, setShowForm] = useState(false); 
 
   useEffect(() => {
     fetchEmployees();
@@ -49,7 +49,7 @@ export default function ManageEmployeesPage() {
       setDepartment("");
       setRole("EMPLOYEE");
       setEditEmployeeId(null);
-      setShowForm(false); // Hide form after submission
+      setShowForm(false); 
       fetchEmployees();
     } else {
       alert("Failed to save employee.");
@@ -62,7 +62,7 @@ export default function ManageEmployeesPage() {
     setDepartment(employee.department || "");
     setRole(employee.role);
     setEditEmployeeId(employee.id);
-    setShowForm(true); // Show form when editing
+    setShowForm(true); 
   };
 
   const handleDelete = async (id) => {
@@ -87,7 +87,7 @@ export default function ManageEmployeesPage() {
     setDepartment("");
     setRole("EMPLOYEE");
     setEditEmployeeId(null);
-    setShowForm(true); // Show form when adding
+    setShowForm(true); 
   };
 
   return (

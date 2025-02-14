@@ -1,37 +1,61 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Loader from "../components/Loader";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // Add loading state
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading
+    setError(""); // Clear previous errors
 
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
+    const result = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
     });
 
-    const data = await res.json();
-
-    if (res.ok) {
-      router.push('/dashboard');
+    if (result?.error) {
+      setError("Invalid credentials"); // Set error message
+      setLoading(false); // Stop loading
     } else {
-      setError(data.error);
+      // Fetch the user's role from the session
+      const response = await fetch("/api/auth/session");
+      const session = await response.json();
+
+      if (session?.user?.role) {
+        // Redirect based on the user's role
+        switch (session.user.role) {
+          case "HR":
+            router.push("/dashboard");
+            break;
+          case "MANAGER":
+            router.push("/dashboard/manager-dashboard");
+            break;
+          case "EMPLOYEE":
+            router.push("/dashboard/employee-dashboard");
+            break;
+          default:
+            setError("Invalid role");
+            setLoading(false);
+        }
+      } else {
+        setError("Failed to fetch user role");
+        setLoading(false);
+      }
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
-      {/* Company Name and HRM Title */}
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-green-400">MayaMatrix Technologies</h1>
         <h2 className="text-xl font-semibold text-gray-900">Human Resource Management System</h2>
@@ -53,6 +77,7 @@ export default function LoginPage() {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
           <div className="mb-6">
@@ -66,14 +91,16 @@ export default function LoginPage() {
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
           <div className="flex justify-center">
             <button
               className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-gray-600 w-full"
               type="submit"
+              disabled={loading} // Disable button while loading
             >
-              Sign In
+              {loading ? "Signing in.." : "Sign In"}
             </button>
           </div>
         </form>

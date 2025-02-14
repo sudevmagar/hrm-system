@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Loader from "@/app/components/Loader"; // Import Loader component
+import Loader from "@/app/components/Loader"; 
 
 export default function LeaveRequestsPage() {
   const [leaveRequests, setLeaveRequests] = useState([]);
@@ -56,7 +56,7 @@ export default function LeaveRequestsPage() {
       <h2 className="text-xl font-semibold mb-4 text-gray-800">Leave Requests</h2>
       
       {loading ? (
-        <Loader /> // Show Loader component
+        <Loader />
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white text-gray-900 rounded-lg overflow-hidden border border-gray-300">

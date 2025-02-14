@@ -6,11 +6,12 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader"; 
 
 export default function EmployeeDetailsPage() {
   const [employee, setEmployee] = useState(null);
   const [attendance, setAttendance] = useState([]);
+  const [loading, setLoading] = useState(true); 
   const router = useRouter();
   const params = useParams();
   const id = params?.id;
@@ -46,29 +47,46 @@ export default function EmployeeDetailsPage() {
       }
     }
 
-    fetchEmployee();
-    fetchAttendance();
+    async function fetchData() {
+      setLoading(true);
+      await fetchEmployee();
+      await fetchAttendance();
+      setLoading(false);
+    }
+
+    fetchData();
   }, [id]);
 
-  if (!employee) {
-    return <Loader />;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader />
+      </div>
+    );
   }
 
   const formatTime = (dateTime) => {
     if (!dateTime) return "N/A";
-    const date = new Date(dateTime);
-    return date.toLocaleTimeString("en-US", {
+    
+    const date = new Date(dateTime); // Convert to Date object
+  
+    // Convert from UTC to local time
+    const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+  
+    return localDate.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
       hour12: true,
     });
   };
+  
 
   const events = attendance.map((record) => ({
-    title: `Clocked-in: ${formatTime(record.checkIn)}\nClocked-out: ${formatTime(record.checkOut) || "N/A"}`,
-    start: record.checkIn || new Date(),
-  }));
+    title: `Clock-in: ${formatTime(record.checkIn)}\nClock-out: ${formatTime(record.checkOut) || "N/A"}`,
+    start: new Date(record.checkIn),
+    end: record.checkOut ? new Date(record.checkOut) : undefined,
+  }));  
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 p-8">
@@ -107,11 +125,9 @@ export default function EmployeeDetailsPage() {
             <div className="relative w-full h-full text-gray-800">{info.dayNumberText}</div>
           )}
           eventContent={(arg) => ({
-            html: `<div class="whitespace-pre-wrap text-gray-900">${arg.event.title.replace(
-              /\n/g,
-              "<br>"
-            )}</div>`,
+            html: `<div class="whitespace-pre-wrap text-gray-900">${arg.event.title.replace(/\n/g, "<br>")}</div>`,
           })}
+          
           className="bg-gray-100 p-4 rounded-lg"
         />
       </div>

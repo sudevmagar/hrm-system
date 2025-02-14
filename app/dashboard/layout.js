@@ -1,15 +1,24 @@
 "use client";
 
+import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import { Providers } from "../providers";
 
 export default function DashboardLayout({ children }) {
+  const { data: session } = useSession();
   const router = useRouter();
-  const pathname = usePathname(); 
+  const pathname = usePathname();
 
   const handleLogout = () => {
-    router.push("/login");
+    signOut({ redirect: false }).then(() => {
+      router.push("/login");
+    });
   };
+
+  if (!session) {
+    return null; // Or a loading spinner
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100 text-gray-900">
@@ -52,7 +61,7 @@ export default function DashboardLayout({ children }) {
 
 // Reusable NavItem Component
 function NavItem({ href, pathname, children }) {
-  const isActive = pathname === href; // Check if current path is active
+  const isActive = pathname === href;
 
   return (
     <li>
@@ -62,7 +71,7 @@ function NavItem({ href, pathname, children }) {
           isActive ? "bg-gray-700 text-white" : "text-gray-800 hover:bg-gray-300"
         }`}
       >
-        {children}
+        <Providers>{children}</Providers>
       </Link>
     </li>
   );

@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Loader from "@/app/components/Loader"; // Import Loader component
 
 export default function LeaveRequestsPage() {
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false); // Loading for buttons
 
   useEffect(() => {
     async function fetchLeaveRequests() {
@@ -26,53 +28,35 @@ export default function LeaveRequestsPage() {
     fetchLeaveRequests();
   }, []);
 
-  const handleApprove = async (id) => {
+  const handleAction = async (id, status) => {
+    setActionLoading(true);
     const response = await fetch(`/api/leave-requests/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ status: "APPROVED" }),
+      body: JSON.stringify({ status }),
     });
 
     if (response.ok) {
-      alert("Leave request approved!");
+      alert(`Leave request ${status.toLowerCase()}!`);
       setLeaveRequests((prev) =>
         prev.map((request) =>
-          request.id === id ? { ...request, status: "APPROVED" } : request
+          request.id === id ? { ...request, status } : request
         )
       );
     } else {
-      alert("Failed to approve leave request.");
+      alert(`Failed to ${status.toLowerCase()} leave request.`);
     }
-  };
-
-  const handleReject = async (id) => {
-    const response = await fetch(`/api/leave-requests/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status: "REJECTED" }),
-    });
-
-    if (response.ok) {
-      alert("Leave request rejected!");
-      setLeaveRequests((prev) =>
-        prev.map((request) =>
-          request.id === id ? { ...request, status: "REJECTED" } : request
-        )
-      );
-    } else {
-      alert("Failed to reject leave request.");
-    }
+    setActionLoading(false);
   };
 
   return (
     <div className="bg-white text-gray-900 p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold mb-4 text-gray-800">Leave Requests</h2>
+      
       {loading ? (
-        <p className="text-gray-600">Loading leave requests...</p>
+        <Loader /> // Show Loader component
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white text-gray-900 rounded-lg overflow-hidden border border-gray-300">
@@ -94,23 +78,33 @@ export default function LeaveRequestsPage() {
                     <td className="py-3 px-4 border-b border-gray-300">{request.user.name}</td>
                     <td className="py-3 px-4 border-b border-gray-300">{request.type}</td>
                     <td className="py-3 px-4 border-b border-gray-300">{request.subject}</td>
-                    <td className="py-3 px-4 border-b border-gray-300">{new Date(request.startDate).toLocaleDateString()}</td>
-                    <td className="py-3 px-4 border-b border-gray-300">{new Date(request.endDate).toLocaleDateString()}</td>
+                    <td className="py-3 px-4 border-b border-gray-300">
+                      {new Date(request.startDate).toLocaleDateString()}
+                    </td>
+                    <td className="py-3 px-4 border-b border-gray-300">
+                      {new Date(request.endDate).toLocaleDateString()}
+                    </td>
                     <td className="py-3 px-4 border-b border-gray-300">{request.status}</td>
                     <td className="py-3 px-4 border-b border-gray-300">
-                      {request.status === "PENDING" && (
+                      {request.status === "REVIEW" && (
                         <div className="space-x-2">
                           <button
-                            onClick={() => handleApprove(request.id)}
-                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                            onClick={() => handleAction(request.id, "APPROVED")}
+                            className={`bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 ${
+                              actionLoading ? "opacity-50 cursor-not-allowed" : ""
+                            }`}
+                            disabled={actionLoading}
                           >
-                            Approve
+                            {actionLoading ? "Processing..." : "Approve"}
                           </button>
                           <button
-                            onClick={() => handleReject(request.id)}
-                            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                            onClick={() => handleAction(request.id, "DECLINED")}
+                            className={`bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 ${
+                              actionLoading ? "opacity-50 cursor-not-allowed" : ""
+                            }`}
+                            disabled={actionLoading}
                           >
-                            Reject
+                            {actionLoading ? "Processing..." : "Reject"}
                           </button>
                         </div>
                       )}

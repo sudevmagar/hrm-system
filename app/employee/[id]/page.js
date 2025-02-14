@@ -6,6 +6,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
+import Loader from "@/app/components/Loader";
 
 export default function EmployeeDetailsPage() {
   const [employee, setEmployee] = useState(null);
@@ -50,7 +51,7 @@ export default function EmployeeDetailsPage() {
   }, [id]);
 
   if (!employee) {
-    return <div className="text-gray-900 text-center">Loading...</div>;
+    return <Loader />;
   }
 
   const formatTime = (dateTime) => {

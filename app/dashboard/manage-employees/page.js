@@ -9,6 +9,7 @@ export default function ManageEmployeesPage() {
   const [department, setDepartment] = useState("");
   const [role, setRole] = useState("EMPLOYEE");
   const [editEmployeeId, setEditEmployeeId] = useState(null);
+  const [showForm, setShowForm] = useState(false); // Control form visibility
 
   useEffect(() => {
     fetchEmployees();
@@ -48,6 +49,7 @@ export default function ManageEmployeesPage() {
       setDepartment("");
       setRole("EMPLOYEE");
       setEditEmployeeId(null);
+      setShowForm(false); // Hide form after submission
       fetchEmployees();
     } else {
       alert("Failed to save employee.");
@@ -60,6 +62,7 @@ export default function ManageEmployeesPage() {
     setDepartment(employee.department || "");
     setRole(employee.role);
     setEditEmployeeId(employee.id);
+    setShowForm(true); // Show form when editing
   };
 
   const handleDelete = async (id) => {
@@ -78,61 +81,22 @@ export default function ManageEmployeesPage() {
     }
   };
 
+  const handleAddEmployeeClick = () => {
+    setName("");
+    setEmail("");
+    setDepartment("");
+    setRole("EMPLOYEE");
+    setEditEmployeeId(null);
+    setShowForm(true); // Show form when adding
+  };
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6 text-gray-800">Manage Employees</h1>
-      <form onSubmit={handleSubmit} className="space-y-4 mb-8">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full p-2 border rounded bg-white text-gray-900"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border rounded bg-white text-gray-900"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Department</label>
-          <input
-            type="text"
-            value={department}
-            onChange={(e) => setDepartment(e.target.value)}
-            className="w-full p-2 border rounded bg-white text-gray-900"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Role</label>
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="w-full p-2 border rounded bg-white text-gray-900"
-          >
-            <option value="EMPLOYEE">Employee</option>
-            <option value="MANAGER">Manager</option>
-            <option value="HR">HR</option>
-          </select>
-        </div>
-        <button
-          type="submit"
-          className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600"
-        >
-          {editEmployeeId ? "Update Employee" : "Add Employee"}
-        </button>
-      </form>
 
+      {/* Employee List Table */}
       <h2 className="text-xl font-bold mb-4 text-gray-800">Employee List</h2>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto mb-8">
         <table className="min-w-full bg-white text-gray-900 rounded-lg overflow-hidden border border-gray-300">
           <thead>
             <tr className="bg-gray-200">
@@ -169,6 +133,67 @@ export default function ManageEmployeesPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Add Employee Button */}
+      <button
+        onClick={handleAddEmployeeClick}
+        className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 mb-8"
+      >
+        Add Employee
+      </button>
+
+      {/* Employee Form */}
+      {showForm && (
+        <form onSubmit={handleSubmit} className="space-y-4 mb-8">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-2 border rounded bg-white text-gray-900"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-2 border rounded bg-white text-gray-900"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Department</label>
+            <input
+              type="text"
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              className="w-full p-2 border rounded bg-white text-gray-900"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Role</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full p-2 border rounded bg-white text-gray-900"
+            >
+              <option value="EMPLOYEE">Employee</option>
+              <option value="MANAGER">Manager</option>
+              <option value="HR">HR</option>
+            </select>
+          </div>
+          <button
+            type="submit"
+            className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600"
+          >
+            {editEmployeeId ? "Update Employee" : "Add Employee"}
+          </button>
+        </form>
+      )}
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 
 export default function DashboardLayout({ children }) {
   const router = useRouter();
-  const pathname = usePathname(); // Get the current route
+  const pathname = usePathname(); 
 
   const handleLogout = () => {
     router.push("/login");
@@ -34,7 +34,7 @@ export default function DashboardLayout({ children }) {
                 Employees
               </NavItem>
               <NavItem href="/dashboard/manage-employees" pathname={pathname}>
-                Manage Users
+                Manage Employees
               </NavItem>
               <NavItem href="/dashboard/leave-requests" pathname={pathname}>
                 Leave Requests

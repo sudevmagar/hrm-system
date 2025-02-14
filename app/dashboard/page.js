@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Loader from "../components/Loader";
 
 export default function DashboardPage() {
   const [employees, setEmployees] = useState([]);
@@ -33,7 +34,7 @@ export default function DashboardPage() {
     <div className="bg-white text-gray-900 p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold mb-4 text-gray-800">Employee List</h2>
       {loading ? (
-        <p className="text-gray-600">Loading employees...</p>
+      <Loader />
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white text-gray-900 rounded-lg overflow-hidden border border-gray-300">

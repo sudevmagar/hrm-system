@@ -6,7 +6,7 @@ import Loader from "@/app/components/Loader";
 export default function LeaveRequestsPage() {
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [actionLoading, setActionLoading] = useState(false); // Loading for buttons
+  const [actionLoading, setActionLoading] = useState(false); 
 
   useEffect(() => {
     async function fetchLeaveRequests() {

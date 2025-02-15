@@ -17,7 +17,7 @@ export default function DashboardLayout({ children }) {
   };
 
   if (!session) {
-    return null; // Or a loading spinner
+    return null;
   }
 
   return (

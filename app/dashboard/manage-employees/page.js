@@ -9,12 +9,14 @@ export default function ManageEmployeesPage() {
   const [department, setDepartment] = useState("");
   const [role, setRole] = useState("EMPLOYEE");
   const [editEmployeeId, setEditEmployeeId] = useState(null);
-  const [showForm, setShowForm] = useState(false); 
+  const [showForm, setShowForm] = useState(false);
 
+  // Fetch employees on component mount
   useEffect(() => {
     fetchEmployees();
   }, []);
 
+  // Fetch all employees
   const fetchEmployees = async () => {
     const response = await fetch("/api/employees");
     const data = await response.json();
@@ -23,6 +25,7 @@ export default function ManageEmployeesPage() {
     }
   };
 
+  // Handle form submission (add or update employee)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -43,51 +46,64 @@ export default function ManageEmployeesPage() {
     });
 
     if (response.ok) {
-      alert(editEmployeeId ? "Employee updated successfully!" : "Employee added successfully!");
+      alert(
+        editEmployeeId
+          ? "Employee updated successfully!"
+          : "Employee added successfully!"
+      );
       setName("");
       setEmail("");
       setDepartment("");
       setRole("EMPLOYEE");
       setEditEmployeeId(null);
-      setShowForm(false); 
+      setShowForm(false);
       fetchEmployees();
     } else {
       alert("Failed to save employee.");
     }
   };
 
+  // Handle editing an employee
   const handleEdit = (employee) => {
     setName(employee.name);
     setEmail(employee.email);
     setDepartment(employee.department || "");
     setRole(employee.role);
     setEditEmployeeId(employee.id);
-    setShowForm(true); 
+    setShowForm(true);
   };
 
+  // Handle deleting an employee
   const handleDelete = async (id) => {
     const confirmDelete = confirm("Are you sure you want to delete this employee?");
     if (!confirmDelete) return;
-
-    const response = await fetch(`/api/employees/${id}`, {
-      method: "DELETE",
-    });
-
-    if (response.ok) {
-      alert("Employee deleted successfully!");
-      fetchEmployees();
-    } else {
-      alert("Failed to delete employee.");
+  
+    try {
+      const response = await fetch(`/api/employees/${id}`, {
+        method: "DELETE",
+      });
+  
+      if (response.ok) {
+        alert("Employee deleted successfully!");
+        fetchEmployees(); // Refresh the employee list
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to delete employee: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error("Error deleting employee:", error);
+      alert("Failed to delete employee. Please check the console for details.");
     }
   };
 
+  // Handle "Add Employee" button click
   const handleAddEmployeeClick = () => {
     setName("");
     setEmail("");
     setDepartment("");
     setRole("EMPLOYEE");
     setEditEmployeeId(null);
-    setShowForm(true); 
+    setShowForm(true);
   };
 
   return (
@@ -112,7 +128,9 @@ export default function ManageEmployeesPage() {
               <tr key={employee.id} className="hover:bg-gray-100 transition">
                 <td className="py-3 px-4 border-b border-gray-300">{employee.name}</td>
                 <td className="py-3 px-4 border-b border-gray-300">{employee.email}</td>
-                <td className="py-3 px-4 border-b border-gray-300">{employee.department || "N/A"}</td>
+                <td className="py-3 px-4 border-b border-gray-300">
+                  {employee.department || "N/A"}
+                </td>
                 <td className="py-3 px-4 border-b border-gray-300">{employee.role}</td>
                 <td className="py-3 px-4 border-b border-gray-300">
                   <button

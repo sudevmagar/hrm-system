@@ -25,7 +25,6 @@ export async function POST(request) {
       return NextResponse.json({ error: "You do not have access to the HR dashboard" }, { status: 403 });
     }
 
-    // Explicitly create the user object to avoid potential null issues
     const userData = {
       id: user.id,
       email: user.email,
@@ -37,7 +36,6 @@ export async function POST(request) {
   } catch (error) {
     console.error("Error during login:", error);
 
-    // More robust error handling: Include the error message in the JSON
-    return NextResponse.json({ error: error.message || "Failed to log in" }, { status: 500 }); // Correct: Return an object with the error
+    return NextResponse.json({ error: error.message || "Failed to log in" }, { status: 500 }); 
   }
 }

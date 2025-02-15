@@ -9,13 +9,13 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false); 
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading
-    setError(""); // Clear previous errors
+    setLoading(true);
+    setError(""); 
 
     const result = await signIn("credentials", {
       redirect: false,
@@ -24,8 +24,8 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      setError("Invalid credentials"); // Set error message
-      setLoading(false); // Stop loading
+      setError("Invalid credentials"); 
+      setLoading(false); 
     } else {
       // Fetch the user's role from the session
       const response = await fetch("/api/auth/session");

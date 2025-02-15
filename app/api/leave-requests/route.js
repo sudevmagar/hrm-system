@@ -17,7 +17,7 @@ export async function GET() {
   } catch (error) {
     console.error("Error fetching leave requests:", error);
     return NextResponse.json(
-      { error: "Failed to fetch leave requests" },
+      { error: "Failed to fetch leave requests", details: error.message }, // Include error details
       { status: 500 }
     );
   }

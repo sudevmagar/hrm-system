@@ -4,9 +4,10 @@ import prisma from "@/lib/prisma";
 // GET a specific employee by ID
 export async function GET(req, { params }) {
   try {
-    const id = parseInt(params?.id, 10);
+    // Ensure params is properly accessed
+    const { id } = params; // id is a string (UUID)
 
-    if (!id || isNaN(id)) {
+    if (!id) {
       return NextResponse.json(
         { error: "Invalid employee ID" },
         { status: 400 }
@@ -37,9 +38,9 @@ export async function GET(req, { params }) {
 // UPDATE a specific employee by ID
 export async function PUT(req, { params }) {
   try {
-    const id = params.id; // ID is already a string (UUID) - No need to parse
-
-    const { name, email, department, role } = await req.json();
+    const { id } = params; // Extract id correctly
+    const body = await req.json();
+    const { name, email, department, role } = body;
 
     if (!name || !email || !role) {
       return NextResponse.json(
@@ -49,7 +50,7 @@ export async function PUT(req, { params }) {
     }
 
     const employee = await prisma.user.update({
-      where: { id }, // Use the string ID directly
+      where: { id },
       data: { name, email, department, role },
     });
 
@@ -66,10 +67,10 @@ export async function PUT(req, { params }) {
 // DELETE a specific employee by ID
 export async function DELETE(req, { params }) {
   try {
-    const id = params.id; // ID is already a string (UUID) - No need to parse
+    const { id } = params;
 
     const employee = await prisma.user.findUnique({
-      where: { id }, // Use the string ID directly
+      where: { id },
     });
 
     if (!employee || employee.role !== "EMPLOYEE") {
@@ -80,7 +81,7 @@ export async function DELETE(req, { params }) {
     }
 
     await prisma.user.delete({
-      where: { id }, // Use the string ID directly
+      where: { id },
     });
 
     return NextResponse.json({ message: "Employee deleted successfully" });

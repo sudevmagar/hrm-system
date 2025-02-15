@@ -67,26 +67,48 @@ export default function EmployeeDetailsPage() {
 
   const formatTime = (dateTime) => {
     if (!dateTime) return "N/A";
-    
-    const date = new Date(dateTime); // Convert to Date object
-  
-    // Convert from UTC to local time
-    const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-  
-    return localDate.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true,
-    });
+
+    try {
+      const date = new Date(dateTime);
+      return date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      });
+    } catch (error) {
+      console.error("Error formatting time:", error);
+      return "N/A"; 
+    }
   };
-  
 
   const events = attendance.map((record) => ({
     title: `Clock-in: ${formatTime(record.checkIn)}\nClock-out: ${formatTime(record.checkOut) || "N/A"}`,
     start: new Date(record.checkIn),
     end: record.checkOut ? new Date(record.checkOut) : undefined,
   }));  
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader />
+      </div>
+    );
+  }
+
+  if (!employee) {
+    return (
+      <div className="min-h-screen bg-gray-100 text-gray-900 p-8">
+        <h1 className="text-2xl font-bold text-gray-800">Employee Not Found</h1>
+        <button
+          onClick={() => router.push("/dashboard")}
+          className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 mt-4"
+        >
+          Back to Dashboard
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 p-8">

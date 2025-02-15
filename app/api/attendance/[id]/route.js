@@ -5,7 +5,7 @@ export async function GET(req, context) {
   const { params } = context;
 
   try {
-    const id = await params.id;
+    const {id} = params;
 
     const attendance = await prisma.attendance.findMany({
       where: { userId: id }, 

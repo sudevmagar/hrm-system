@@ -31,8 +31,8 @@ This is a Human Resource Management System built using Next.js, MongoDB, Prisma,
 
 3. Set up your environment variables in a .env file:
    ```bash
-   DATABASE_URL="mongodb+srv://sudev:hrm2025@hrm-cluster.r22fw.mongodb.net/hrm-database?retryWrites=true&w=majority&appName=hrm-cluster"
-   NEXTAUTH_SECRET="Gm3vB9qLz8yD2sW5Xf7pK6nT1aJ0RcYV"
+   DATABASE_URL="your_mongodb_connection_string"
+   NEXTAUTH_SECRET="your_secret_key"
 
 4. Generate Prisma Client:
    ```bash
@@ -51,4 +51,6 @@ For testing purposes, the following default credentials can be used to log into 
 - **Email:** `hr@mayamatrix.com`
 - **Password:** `hrpassword`
 
+## Live Demo 
 
+Live Demo Link- https://hrm-system-inky.vercel.app
